@@ -1,11 +1,19 @@
 import jwt from 'jsonwebtoken';
 
+// Json web tokens add something into payload => we want to add user id
 const generateToken = (res, userId) => {
+  // create token
+  // use jwt package with method sign =>takes an object w/ the payload(user id) & secret
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30d'})
 
+    // save token in cookie
   res.cookie('jwt', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development'
+    // secure is true when in production & false if in development 
+    secure: process.env.NODE_ENV !== 'development',
+    sameSite: "strict",
+    maxAge: 30 * 24 * 60 * 60 * 1000
   })
-
 }
+
+export default generateToken;
